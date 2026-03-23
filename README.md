@@ -10,6 +10,9 @@ Tecnologías (referencia)
 - Frontend: HTML + CSS + JavaScript (fetch a REST)
 - Pruebas: Postman collections
 
+Local Database (Docker)
+- See `docs/DOCKER_POSTGRES.md` for setup, commands, and DBeaver connection.
+
 Estructura del repositorio
 - backend/: Código del servicio Spring Boot (placeholder en este segmento)
 - db/: Scripts SQL (schema.sql, data.sql)
@@ -29,4 +32,3 @@ Notas de dominio (resumen)
 - Entregas: rutas y recogidas en Huehuetenango / Santiago.
 - Empaque: bolsas por N unidades, etiquetas térmicas por pedido/bolsa.
 - Finanzas: conciliación cobrado vs depositado, comisión del 10%.
-
