@@ -18,3 +18,7 @@ logging:
     org.hibernate.SQL: OFF
     org.hibernate.type.descriptor.sql.BasicBinder: OFF
 
+security:
+  jwt:
+    secret: ${SVR_JWT_SECRET:dev-secret-change-me}
+    expiration-minutes: 240
