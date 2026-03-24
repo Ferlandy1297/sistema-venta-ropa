@@ -1,6 +1,7 @@
 package gt.edu.miumg.svr.model;
 
 import jakarta.persistence.*;
+import java.time.Instant;
 
 @Entity
 @Table(name = "bolsas")
@@ -19,6 +20,13 @@ public class Bolsa {
     @Column(name = "entregada", nullable = false)
     private Boolean entregada = Boolean.FALSE;
 
+    @ManyToOne
+    @JoinColumn(name = "entregada_por")
+    private Usuario entregadaPor;
+
+    @Column(name = "entregada_at")
+    private Instant entregadaAt;
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public Pedido getPedido() { return pedido; }
@@ -27,5 +35,8 @@ public class Bolsa {
     public void setNumero(Integer numero) { this.numero = numero; }
     public Boolean getEntregada() { return entregada; }
     public void setEntregada(Boolean entregada) { this.entregada = entregada; }
+    public Usuario getEntregadaPor() { return entregadaPor; }
+    public void setEntregadaPor(Usuario entregadaPor) { this.entregadaPor = entregadaPor; }
+    public Instant getEntregadaAt() { return entregadaAt; }
+    public void setEntregadaAt(Instant entregadaAt) { this.entregadaAt = entregadaAt; }
 }
-

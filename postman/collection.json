@@ -27,6 +27,51 @@
       "name": "Auth",
       "item": [
         {
+          "name": "Login Admin",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] }
+          },
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "pm.test('200 OK', function(){ pm.response.to.have.status(200); });",
+              "var data = pm.response.json(); if (data && data.accessToken) pm.environment.set('token_admin', data.accessToken);"
+            ] } }
+          ]
+        },
+        {
+          "name": "Login Repartidor",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"username\": \"repartidor_huehue\",\n  \"password\": \"repartidor123\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] }
+          },
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "pm.test('200 OK', function(){ pm.response.to.have.status(200); });",
+              "var data = pm.response.json(); if (data && data.accessToken) pm.environment.set('token_repartidor', data.accessToken);"
+            ] } }
+          ]
+        },
+        {
+          "name": "Login Santiago",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"username\": \"encargado_santiago\",\n  \"password\": \"santiago123\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] }
+          },
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "pm.test('200 OK', function(){ pm.response.to.have.status(200); });",
+              "var data = pm.response.json(); if (data && data.accessToken) pm.environment.set('token_santiago', data.accessToken);"
+            ] } }
+          ]
+        },
+        {
           "name": "Login",
           "request": {
             "method": "POST",
@@ -100,6 +145,42 @@
           },
           "response": []
         }
+      ]
+    },
+    {
+      "name": "Admin - Operacion",
+      "item": [
+        { "name": "List pedidos", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token_admin}}" } ], "url": { "raw": "{{baseUrl}}/api/admin/pedidos?fecha=2026-03-24", "host": ["{{baseUrl}}"], "path": ["api","admin","pedidos"], "query": [ {"key":"fecha","value":"2026-03-24"} ] } }, "response": [] },
+        { "name": "Cambiar estado", "request": { "method": "PATCH", "header": [ { "key": "Authorization", "value": "Bearer {{token_admin}}" }, {"key":"Content-Type","value":"application/json"} ], "body": {"mode":"raw","raw":"{\n  \"estadoPedido\": \"PREPARANDO\"\n}"}, "url": { "raw": "{{baseUrl}}/api/admin/pedidos/1/estado", "host":["{{baseUrl}}"], "path":["api","admin","pedidos","1","estado"] } }, "response": [] },
+        { "name": "Asignar repartidor", "request": { "method": "PATCH", "header": [ { "key": "Authorization", "value": "Bearer {{token_admin}}" }, {"key":"Content-Type","value":"application/json"} ], "body": {"mode":"raw","raw":"{\n  \"repartidorUsername\": \"repartidor_huehue\"\n}"}, "url": { "raw": "{{baseUrl}}/api/admin/pedidos/1/asignar-repartidor", "host":["{{baseUrl}}"], "path":["api","admin","pedidos","1","asignar-repartidor"] } }, "response": [] },
+        { "name": "Ver bolsas", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token_admin}}" } ], "url": { "raw": "{{baseUrl}}/api/admin/pedidos/1/bolsas", "host":["{{baseUrl}}"], "path":["api","admin","pedidos","1","bolsas"] } }, "response": [] },
+        { "name": "Confirmar pago", "request": { "method": "PATCH", "header": [ { "key": "Authorization", "value": "Bearer {{token_admin}}" }, {"key":"Content-Type","value":"application/json"} ], "body": {"mode":"raw","raw":"{\n  \"estadoPago\": \"PAGADO\"\n}"}, "url": { "raw": "{{baseUrl}}/api/admin/pedidos/1/pago", "host":["{{baseUrl}}"], "path":["api","admin","pedidos","1","pago"] } }, "response": [] },
+        { "name": "Conciliacion", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token_admin}}" } ], "url": { "raw": "{{baseUrl}}/api/admin/conciliacion?fecha=2026-03-24", "host":["{{baseUrl}}"], "path":["api","admin","conciliacion"], "query":[{"key":"fecha","value":"2026-03-24"}] } }, "response": [] }
+      ]
+    },
+    {
+      "name": "Repartidor Huehue",
+      "item": [
+        { "name": "Mis pedidos", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token_repartidor}}" } ], "url": { "raw": "{{baseUrl}}/api/repartidor/pedidos", "host":["{{baseUrl}}"], "path":["api","repartidor","pedidos"] } }, "response": [] },
+        { "name": "En ruta", "request": { "method": "PATCH", "header": [ { "key": "Authorization", "value": "Bearer {{token_repartidor}}" } ], "url": { "raw": "{{baseUrl}}/api/repartidor/pedidos/1/en-ruta", "host":["{{baseUrl}}"], "path":["api","repartidor","pedidos","1","en-ruta"] } }, "response": [] },
+        { "name": "Entregar", "request": { "method": "PATCH", "header": [ { "key": "Authorization", "value": "Bearer {{token_repartidor}}" }, {"key":"Content-Type","value":"application/json"} ], "body": {"mode":"raw","raw":"{\n  \"efectivoCobrado\": true,\n  \"efectivoMonto\": 100.00\n}"}, "url": { "raw": "{{baseUrl}}/api/repartidor/pedidos/1/entregar", "host":["{{baseUrl}}"], "path":["api","repartidor","pedidos","1","entregar"] } }, "response": [] }
+      ]
+    },
+    {
+      "name": "Santiago",
+      "item": [
+        { "name": "Listar pedidos", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token_santiago}}" } ], "url": { "raw": "{{baseUrl}}/api/santiago/pedidos", "host":["{{baseUrl}}"], "path":["api","santiago","pedidos"] } }, "response": [] },
+        { "name": "Ver bolsas", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token_santiago}}" } ], "url": { "raw": "{{baseUrl}}/api/santiago/pedidos/1/bolsas", "host":["{{baseUrl}}"], "path":["api","santiago","pedidos","1","bolsas"] } }, "response": [] },
+        { "name": "Marcar bolsa entregada", "request": { "method": "PATCH", "header": [ { "key": "Authorization", "value": "Bearer {{token_santiago}}" } ], "url": { "raw": "{{baseUrl}}/api/santiago/pedidos/1/bolsas/1/entregar", "host":["{{baseUrl}}"], "path":["api","santiago","pedidos","1","bolsas","1","entregar"] } }, "response": [] },
+        { "name": "Recoger", "request": { "method": "PATCH", "header": [ { "key": "Authorization", "value": "Bearer {{token_santiago}}" }, {"key":"Content-Type","value":"application/json"} ], "body": {"mode":"raw","raw":"{\n  \"efectivoCobrado\": false\n}"}, "url": { "raw": "{{baseUrl}}/api/santiago/pedidos/1/recoger", "host":["{{baseUrl}}"], "path":["api","santiago","pedidos","1","recoger"] } }, "response": [] }
+      ]
+    },
+    {
+      "name": "Depositos",
+      "item": [
+        { "name": "Crear deposito (repartidor)", "request": { "method": "POST", "header": [ { "key": "Authorization", "value": "Bearer {{token_repartidor}}" }, {"key":"Content-Type","value":"application/json"} ], "body": {"mode":"raw","raw":"{\n  \"monto\": 200.00,\n  \"referencia\": \"BOLETA123\"\n}"}, "url": { "raw": "{{baseUrl}}/api/depositos", "host":["{{baseUrl}}"], "path":["api","depositos"] } }, "response": [] },
+        { "name": "Crear deposito (santiago)", "request": { "method": "POST", "header": [ { "key": "Authorization", "value": "Bearer {{token_santiago}}" }, {"key":"Content-Type","value":"application/json"} ], "body": {"mode":"raw","raw":"{\n  \"monto\": 150.00,\n  \"referencia\": \"DEP-SCL\"\n}"}, "url": { "raw": "{{baseUrl}}/api/depositos", "host":["{{baseUrl}}"], "path":["api","depositos"] } }, "response": [] },
+        { "name": "Verificar (admin)", "request": { "method": "PATCH", "header": [ { "key": "Authorization", "value": "Bearer {{token_admin}}" }, {"key":"Content-Type","value":"application/json"} ], "body": {"mode":"raw","raw":"{\n  \"verificado\": true,\n  \"nota\": \"OK\"\n}"}, "url": { "raw": "{{baseUrl}}/api/admin/depositos/1/verificar", "host":["{{baseUrl}}"], "path":["api","admin","depositos","1","verificar"] } }, "response": [] }
       ]
     },
     {

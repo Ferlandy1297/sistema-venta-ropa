@@ -63,6 +63,38 @@ public class Pedido {
     @Column(name = "updated_at")
     private Instant updatedAt;
 
+    @ManyToOne
+    @JoinColumn(name = "repartidor_id")
+    private Usuario repartidor;
+
+    @Column(name = "efectivo_cobrado", nullable = false)
+    private Boolean efectivoCobrado = Boolean.FALSE;
+
+    @Column(name = "efectivo_monto")
+    private java.math.BigDecimal efectivoMonto;
+
+    @ManyToOne
+    @JoinColumn(name = "efectivo_cobrado_por")
+    private Usuario efectivoCobradoPor;
+
+    @Column(name = "efectivo_cobrado_at")
+    private Instant efectivoCobradoAt;
+
+    @Column(name = "incidencia_tipo")
+    private String incidenciaTipo;
+
+    @Column(name = "incidencia_nota")
+    private String incidenciaNota;
+
+    @Column(name = "preparado_at")
+    private Instant preparadoAt;
+
+    @Column(name = "en_ruta_at")
+    private Instant enRutaAt;
+
+    @Column(name = "entregado_at")
+    private Instant entregadoAt;
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getFolio() { return folio; }
@@ -93,6 +125,26 @@ public class Pedido {
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
+    public Usuario getRepartidor() { return repartidor; }
+    public void setRepartidor(Usuario repartidor) { this.repartidor = repartidor; }
+    public Boolean getEfectivoCobrado() { return efectivoCobrado; }
+    public void setEfectivoCobrado(Boolean efectivoCobrado) { this.efectivoCobrado = efectivoCobrado; }
+    public java.math.BigDecimal getEfectivoMonto() { return efectivoMonto; }
+    public void setEfectivoMonto(java.math.BigDecimal efectivoMonto) { this.efectivoMonto = efectivoMonto; }
+    public Usuario getEfectivoCobradoPor() { return efectivoCobradoPor; }
+    public void setEfectivoCobradoPor(Usuario efectivoCobradoPor) { this.efectivoCobradoPor = efectivoCobradoPor; }
+    public Instant getEfectivoCobradoAt() { return efectivoCobradoAt; }
+    public void setEfectivoCobradoAt(Instant efectivoCobradoAt) { this.efectivoCobradoAt = efectivoCobradoAt; }
+    public String getIncidenciaTipo() { return incidenciaTipo; }
+    public void setIncidenciaTipo(String incidenciaTipo) { this.incidenciaTipo = incidenciaTipo; }
+    public String getIncidenciaNota() { return incidenciaNota; }
+    public void setIncidenciaNota(String incidenciaNota) { this.incidenciaNota = incidenciaNota; }
+    public Instant getPreparadoAt() { return preparadoAt; }
+    public void setPreparadoAt(Instant preparadoAt) { this.preparadoAt = preparadoAt; }
+    public Instant getEnRutaAt() { return enRutaAt; }
+    public void setEnRutaAt(Instant enRutaAt) { this.enRutaAt = enRutaAt; }
+    public Instant getEntregadoAt() { return entregadoAt; }
+    public void setEntregadoAt(Instant entregadoAt) { this.entregadoAt = entregadoAt; }
 
     @PrePersist
     public void prePersist() {

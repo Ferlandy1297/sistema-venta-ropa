@@ -54,6 +54,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/public/drops/*/prendas").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/checkout").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/repartidor/**").hasRole("REPARTIDOR_HUEHUE")
+                .requestMatchers("/api/santiago/**").hasRole("ENCARGADO_SANTIAGO")
+                .requestMatchers(HttpMethod.POST, "/api/depositos").authenticated()
                 .anyRequest().authenticated()
             )
             .httpBasic(Customizer.withDefaults());
