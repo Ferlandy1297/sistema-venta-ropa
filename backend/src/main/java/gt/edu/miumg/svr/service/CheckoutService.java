@@ -5,6 +5,8 @@ import gt.edu.miumg.svr.dto.CheckoutDtos;
 import gt.edu.miumg.svr.model.*;
 import gt.edu.miumg.svr.model.enums.*;
 import gt.edu.miumg.svr.repository.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,9 @@ public class CheckoutService {
     private final PedidoDetalleRepository pedidoDetalleRepository;
     private final BolsaRepository bolsaRepository;
     private final PrendaRepository prendaRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public CheckoutService(GrupoRepository grupoRepository, ClienteRepository clienteRepository, PedidoRepository pedidoRepository, PedidoDetalleRepository pedidoDetalleRepository, BolsaRepository bolsaRepository, PrendaRepository prendaRepository) {
         this.grupoRepository = grupoRepository;
@@ -66,6 +71,9 @@ public class CheckoutService {
         pedido.setBolsasTotal(bolsas);
         pedido.setTotal(BigDecimal.ZERO);
         pedido = pedidoRepository.save(pedido);
+        // Ensure DB trigger-generated folio is loaded
+        pedidoRepository.flush();
+        entityManager.refresh(pedido);
 
         BigDecimal total = BigDecimal.ZERO;
         for (Long prendaId : req.prendaIds) {
@@ -107,4 +115,3 @@ public class CheckoutService {
 
     private boolean isBlank(String s) { return s == null || s.trim().isEmpty(); }
 }
-

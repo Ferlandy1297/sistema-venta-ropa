@@ -15,7 +15,7 @@ public class Pedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "folio", nullable = false, unique = true)
+    @Column(name = "folio", nullable = false, unique = true, insertable = false, updatable = false)
     private String folio;
 
     @ManyToOne(optional = false)
