@@ -50,6 +50,10 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.GET, "/api/health").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/public/drops").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/public/drops/*/prendas").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/checkout").permitAll()
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
             .httpBasic(Customizer.withDefaults());

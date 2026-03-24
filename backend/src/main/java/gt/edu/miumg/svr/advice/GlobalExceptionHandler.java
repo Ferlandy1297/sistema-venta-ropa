@@ -1,6 +1,7 @@
 package gt.edu.miumg.svr.advice;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -29,10 +30,50 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(body);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalArg(IllegalArgumentException ex, HttpServletRequest request) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        body.put("timestamp", Instant.now());
+        body.put("status", status.value());
+        body.put("error", status.getReasonPhrase());
+        body.put("message", ex.getMessage());
+        body.put("path", request.getRequestURI());
+        return ResponseEntity.status(status).body(body);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleAll(Exception ex, HttpServletRequest request) {
         Map<String, Object> body = new LinkedHashMap<>();
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        body.put("timestamp", Instant.now());
+        body.put("status", status.value());
+        body.put("error", status.getReasonPhrase());
+        body.put("message", ex.getMessage());
+        body.put("path", request.getRequestURI());
+        return ResponseEntity.status(status).body(body);
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<Map<String, Object>> handleConflict(ConflictException ex, HttpServletRequest request) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        HttpStatus status = HttpStatus.CONFLICT;
+        body.put("timestamp", Instant.now());
+        body.put("status", status.value());
+        body.put("error", status.getReasonPhrase());
+        body.put("message", ex.getMessage());
+        body.put("path", request.getRequestURI());
+        return ResponseEntity.status(status).body(body);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleDataIntegrity(DataIntegrityViolationException ex, HttpServletRequest request) {
+        String message = ex.getMostSpecificCause() != null ? ex.getMostSpecificCause().getMessage() : ex.getMessage();
+        if (message != null && message.toLowerCase().contains("pedido_detalle_prenda_unique")) {
+            return handleConflict(new ConflictException("La prenda ya fue comprada."), request);
+        }
+        Map<String, Object> body = new LinkedHashMap<>();
+        HttpStatus status = HttpStatus.BAD_REQUEST;
         body.put("timestamp", Instant.now());
         body.put("status", status.value());
         body.put("error", status.getReasonPhrase());
