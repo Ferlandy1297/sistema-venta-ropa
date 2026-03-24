@@ -101,6 +101,99 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "Admin - Drops/Prendas",
+      "item": [
+        {
+          "name": "Create Drop",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"grupoCodigo\": \"MORFOSIS\",\n  \"nombre\": \"Drop Noche\",\n  \"estado\": \"BORRADOR\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/admin/drops", "host": ["{{baseUrl}}"], "path": ["api","admin","drops"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Publish Drop",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"estado\": \"PUBLICADO\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/admin/drops/1/estado", "host": ["{{baseUrl}}"], "path": ["api","admin","drops","1","estado"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Prenda",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"titulo\": \"Blusa Zara\",\n  \"precio\": 50.00,\n  \"fotos\": [\"https://example.com/1.jpg\", \"https://example.com/2.jpg\"]\n}" },
+            "url": { "raw": "{{baseUrl}}/api/admin/drops/1/prendas", "host": ["{{baseUrl}}"], "path": ["api","admin","drops","1","prendas"] }
+          },
+          "response": []
+        },
+        {
+          "name": "List Prendas",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/api/admin/drops/1/prendas", "host": ["{{baseUrl}}"], "path": ["api","admin","drops","1","prendas"] }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Public Catalog",
+      "item": [
+        {
+          "name": "List Public Drops",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/public/drops", "host": ["{{baseUrl}}"], "path": ["api","public","drops"] } },
+          "response": []
+        },
+        {
+          "name": "List Public Prendas by Drop",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/public/drops/1/prendas", "host": ["{{baseUrl}}"], "path": ["api","public","drops","1","prendas"] } },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Checkout",
+      "item": [
+        {
+          "name": "Checkout Huehue (2 bolsas)",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"grupoCodigo\": \"MORFOSIS\",\n  \"tipoEntrega\": \"HUEHUE_DELIVERY\",\n  \"clienteNombre\": \"Ana Perez\",\n  \"telefono\": \"55555555\",\n  \"zona\": \"Zona 1\",\n  \"direccion\": \"Barrio X ...\",\n  \"referencia\": \"Frente a ...\",\n  \"metodoPago\": \"EFECTIVO\",\n  \"bolsasTotal\": 2,\n  \"prendaIds\": [1,2]\n}" },
+            "url": { "raw": "{{baseUrl}}/api/checkout", "host": ["{{baseUrl}}"], "path": ["api","checkout"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Checkout Santiago (3 bolsas)",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"grupoCodigo\": \"ELITE360\",\n  \"tipoEntrega\": \"SANTIAGO_PICKUP\",\n  \"clienteNombre\": \"Juan Lopez\",\n  \"telefono\": \"55553333\",\n  \"metodoPago\": \"TRANSFERENCIA\",\n  \"bolsasTotal\": 3,\n  \"prendaIds\": [3]\n}" },
+            "url": { "raw": "{{baseUrl}}/api/checkout", "host": ["{{baseUrl}}"], "path": ["api","checkout"] }
+          },
+          "response": []
+        }
+      ]
     }
   ]
 }
