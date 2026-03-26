@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="28" viewBox="0 0 160 28" role="img" aria-label="Morfosis">
+  <g fill="none" fill-rule="evenodd">
+    <!-- Simple butterfly icon with two wings -->
+    <circle cx="18" cy="12" r="5" fill="#ff5da2" fill-opacity=".7"/>
+    <circle cx="26" cy="12" r="5" fill="#ff5da2"/>
+    <path d="M22 7v10" stroke="#ff5da2" stroke-width="2" stroke-linecap="round"/>
+    <!-- Wordmark -->
+    <text x="44" y="20" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="700" fill="#1b1b1b">Morfosis</text>
+  </g>
+</svg>
+

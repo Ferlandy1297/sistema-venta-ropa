@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="morfosis">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistema Venta de Ropa — Home</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <!-- Header and promo are injected by app.js -->
+
+    <main id="main">
+      <section class="hero">
+        <div class="hero__content container">
+          <h1>Moda simple, envíos claros.</h1>
+          <p>Dos marcas. Un flujo sin fricción. Checkout‑first para evitar dobles ventas.</p>
+          <div class="hero__actions">
+            <a class="btn btn--primary" href="cliente.html">Ver drops</a>
+            <a class="btn btn--ghost" href="admin.html">Operación</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section container" id="drops-publicados">
+        <div class="section__header">
+          <h2>Drops publicados</h2>
+          <a class="link" href="cliente.html">Ver todo</a>
+        </div>
+        <div class="grid grid--cards">
+          <article class="card">
+            <div class="card__media"></div>
+            <div class="card__body">
+              <h3>Drop: Colores tierra</h3>
+              <p>Prendas únicas. Stock 1.</p>
+              <button class="btn btn--secondary" disabled>Ver</button>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card__media"></div>
+            <div class="card__body">
+              <h3>Drop: Minimal blanco y negro</h3>
+              <p>Básicos para todos los días.</p>
+              <button class="btn btn--secondary" disabled>Ver</button>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card__media"></div>
+            <div class="card__body">
+              <h3>Drop: Denim y capas</h3>
+              <p>Texturas que se combinan fácil.</p>
+              <button class="btn btn--secondary" disabled>Ver</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section container" id="shop-by-style">
+        <div class="section__header">
+          <h2>Shop by style</h2>
+        </div>
+        <div class="chips">
+          <button class="chip">Casual</button>
+          <button class="chip">Street</button>
+          <button class="chip">Formal</button>
+          <button class="chip">Vintage</button>
+          <button class="chip">Sport</button>
+        </div>
+      </section>
+
+      <section class="section container" id="popular">
+        <div class="section__header">
+          <h2>Popular esta semana</h2>
+        </div>
+        <div class="carousel" aria-label="Carrusel de productos">
+          <div class="carousel__track">
+            <div class="card card--wide"><div class="card__media"></div><div class="card__body"><h3>Camisa lino</h3></div></div>
+            <div class="card card--wide"><div class="card__media"></div><div class="card__body"><h3>Falda midi</h3></div></div>
+            <div class="card card--wide"><div class="card__media"></div><div class="card__body"><h3>Pantalón recto</h3></div></div>
+            <div class="card card--wide"><div class="card__media"></div><div class="card__body"><h3>Hoodie oversize</h3></div></div>
+            <div class="card card--wide"><div class="card__media"></div><div class="card__body"><h3>Blazer negro</h3></div></div>
+            <div class="card card--wide"><div class="card__media"></div><div class="card__body"><h3>Top canalé</h3></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section container" id="por-precio">
+        <div class="section__header">
+          <h2>Por precio</h2>
+        </div>
+        <div class="chips chips--lg">
+          <button class="chip chip--lg">Q49 y menos</button>
+          <button class="chip chip--lg">Q50–Q99</button>
+          <button class="chip chip--lg">Q100–Q149</button>
+          <button class="chip chip--lg">Q150+</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer is injected by app.js -->
+
+    <script src="assets/js/theme.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/ui.js"></script>
+    <script src="assets/js/app.js"></script>
+  </body>
+  </html>
+
