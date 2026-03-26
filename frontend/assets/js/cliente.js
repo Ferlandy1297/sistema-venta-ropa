@@ -6,6 +6,7 @@
     cart: new Map(), // id -> prenda
   }
 
+  // Keep: unwrapList
   function unwrapList(data){
     if(Array.isArray(data)) return data
     if(data && Array.isArray(data.value)) return data.value
@@ -25,6 +26,7 @@
     if(badge){ badge.textContent = window.Theme.getGrupoCodigo() }
   }
 
+  // Keep: loadDrops
   async function loadDrops(){
     const container = qs('#drops-container')
     container.innerHTML = '<div class="empty">Cargando drops…</div>'
@@ -32,20 +34,20 @@
       const data = await window.API.fetchJson('/api/public/drops')
       const list = unwrapList(data)
       const grupo = window.Theme.getGrupoCodigo()
-      // Filtrar por grupo activo
       state.drops = list.filter(d => d.grupoCodigo === grupo)
       renderDrops()
-      // Autoselect first
       if(state.drops.length){
         selectDrop(state.drops[0].id)
       } else {
         qs('#prendas-grid').innerHTML = '<div class="empty">No hay drops publicados para este grupo.</div>'
       }
     } catch (err){
-      container.innerHTML = `<div class="empty">Error cargando drops: ${err.message}</div>`
+      const msg = err && err.message ? err.message : 'Error desconocido'
+      container.innerHTML = `<div class="empty">Error cargando drops: ${escapeHtml(msg)}</div>`
     }
   }
 
+  // Keep: renderDrops
   function renderDrops(){
     const container = qs('#drops-container')
     if(!state.drops.length){
@@ -69,12 +71,14 @@
     })
   }
 
+  // Keep: selectDrop
   async function selectDrop(dropId){
     state.selectedDropId = dropId
     renderDrops()
     await loadPrendas(dropId)
   }
 
+  // Keep: loadPrendas
   async function loadPrendas(dropId){
     const grid = qs('#prendas-grid')
     const title = qs('#prendas-title')
@@ -86,10 +90,12 @@
       state.prendas = unwrapList(data)
       renderPrendas()
     } catch (err){
-      grid.innerHTML = `<div class="empty">Error cargando prendas: ${err.message}</div>`
+      const msg = err && err.message ? err.message : 'Error desconocido'
+      grid.innerHTML = `<div class="empty">Error cargando prendas: ${escapeHtml(msg)}</div>`
     }
   }
 
+  // Keep: renderPrendas
   function renderPrendas(){
     const grid = qs('#prendas-grid')
     grid.innerHTML = ''
@@ -119,6 +125,7 @@
     })
   }
 
+  // Keep: toggleCart
   function toggleCart(prenda){
     if(state.cart.has(prenda.id)) state.cart.delete(prenda.id)
     else state.cart.set(prenda.id, prenda)
@@ -126,6 +133,7 @@
     renderCart()
   }
 
+  // Keep: renderCart
   function renderCart(){
     const itemsEl = qs('#cart-items')
     const totalEl = qs('#cart-total')
@@ -134,7 +142,7 @@
     if(!values.length){
       itemsEl.innerHTML = '<div class="empty">Aún no has añadido prendas.</div>'
       totalEl.textContent = money(0)
-      btn.disabled = true
+      if(btn) btn.disabled = true
       return
     }
     itemsEl.innerHTML = ''
@@ -154,12 +162,13 @@
       itemsEl.appendChild(row)
     })
     totalEl.textContent = money(total)
-    btn.disabled = false
+    if(btn) btn.disabled = false
   }
 
+  // Checkout modal with REAL form
   function openCheckout(){
     if(!state.cart.size){ window.UI.toast('El carrito está vacío', 'info'); return }
-    const body = el(`
+    const bodyHtml = `
       <form id="checkout-form" class="form">
         <div class="form__row">
           <label>Nombre completo<span class="req">*</span>
@@ -175,7 +184,7 @@
           <label>Entrega<span class="req">*</span>
             <select name="tipoEntrega" required>
               <option value="HUEHUE_DELIVERY">Huehue delivery</option>
-              <option value="SANTIAGO_PICKUP">Santiago pickup</option>
+              <option value="SANTIAGO_PICKUP">Santiago Chimaltenango</option>
             </select>
           </label>
         </div>
@@ -215,11 +224,9 @@
           <button type="submit" class="btn btn--primary">Confirmar pedido</button>
         </div>
       </form>
-    `)
-    const footer = document.createElement('div') // not used; form has its own buttons
-    const modal = window.UI.openModal({ title: 'Checkout', body })
-
-    const form = body
+    `
+    const backdrop = window.UI.openModal({ title: 'Checkout', body: bodyHtml })
+    const form = backdrop.querySelector('#checkout-form')
     const tipoSel = form.querySelector('select[name="tipoEntrega"]')
     const huehueFields = form.querySelector('#huehue-fields')
     const updateEntrega = () => {
@@ -245,16 +252,26 @@
       tipoEntrega: fd.get('tipoEntrega'),
       clienteNombre: (fd.get('clienteNombre')||'').toString().trim(),
       telefono: (fd.get('telefono')||'').toString().trim(),
-      zona: (fd.get('zona')||'').toString().trim() || undefined,
-      direccion: (fd.get('direccion')||'').toString().trim() || undefined,
-      referencia: (fd.get('referencia')||'').toString().trim() || undefined,
       metodoPago: fd.get('metodoPago'),
       bolsasTotal: parseInt(fd.get('bolsasTotal')||'1', 10) || 1,
       prendaIds: Array.from(state.cart.keys()),
+      zona: (fd.get('zona')||'').toString().trim() || undefined,
+      direccion: (fd.get('direccion')||'').toString().trim() || undefined,
+      referencia: (fd.get('referencia')||'').toString().trim() || undefined,
     }
+
+    // Conditional validation
+    if(payload.tipoEntrega === 'HUEHUE_DELIVERY'){
+      if(!payload.zona || !payload.direccion || !payload.referencia){
+        window.UI.toast('Completa zona, dirección y referencia', 'error')
+        return
+      }
+    } else {
+      delete payload.zona; delete payload.direccion; delete payload.referencia
+    }
+
     try {
       const res = await window.API.fetchJson('/api/checkout', { method: 'POST', body: payload })
-      // Success: show confirmation
       const modal = document.querySelector('.modal')
       if(modal){
         modal.querySelector('.modal__header').textContent = 'Pedido confirmado'
@@ -275,21 +292,25 @@
         const footer = modal.querySelector('.modal__footer')
         footer.innerHTML = ''
       }
+      state.cart.clear()
+      renderCart()
       window.UI.toast('Pedido creado', 'success')
     } catch (err){
-      if(err.status === 409){
+      if(err && err.status === 409){
         window.UI.toast('La prenda ya no está disponible', 'error')
         if(state.selectedDropId) loadPrendas(state.selectedDropId)
         return
       }
-      if(err.status === 400){
-        window.UI.toast(err.message || 'Error de validación', 'error')
+      if(err && err.status === 400){
+        const msg = (err.data && err.data.message) ? err.data.message : err.message
+        window.UI.toast(msg || 'Error de validación', 'error')
         return
       }
       window.UI.toast('Error en checkout', 'error')
     }
   }
 
+  // Keep: renderImg
   function renderImg(url, alt){
     if(!url) return ''
     const a = escapeHtml(alt || '')
@@ -297,24 +318,21 @@
     return `<img src="${u}" alt="${a}" loading="lazy"/>`
   }
 
+  // Keep: escapeHtml
   function escapeHtml(s){
     return String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]))
   }
 
+  // Keep: init
   function init(){
     setGrupoBadge()
     loadDrops()
     renderCart()
     const btnCheckout = qs('#btn-checkout')
-    btnCheckout.addEventListener('click', openCheckout)
+    if(btnCheckout){ btnCheckout.addEventListener('click', openCheckout) }
     window.addEventListener('svr:theme', () => { setGrupoBadge(); loadDrops() })
   }
 
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init)
   else init()
-
-  // Expose for tests if needed
-  window.Cliente = { loadDrops, loadPrendas, openCheckout }
-  window.ClienteUtils = { unwrapList }
 })()
-
