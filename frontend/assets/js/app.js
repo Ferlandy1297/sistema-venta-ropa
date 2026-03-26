@@ -1,4 +1,13 @@
 ;(function(){
+  function ensureFavicon(){
+    if(document.querySelector('link[rel="icon"]')) return
+    const link = document.createElement('link')
+    link.rel = 'icon'
+    link.type = 'image/svg+xml'
+    // Simple circle favicon (dark) as inline SVG
+    link.href = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"%3E%3Ccircle cx="8" cy="8" r="8" fill="%23111214"/%3E%3C/svg%3E'
+    document.head.appendChild(link)
+  }
   function navLinks(){
     return [
       { href: 'index.html', label: 'Home' },
@@ -120,6 +129,7 @@
   }
 
   function init(){
+    ensureFavicon()
     renderHeader()
     renderFooter()
     highlightActive()
@@ -131,4 +141,3 @@
     init()
   }
 })()
-

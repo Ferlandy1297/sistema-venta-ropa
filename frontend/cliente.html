@@ -2,31 +2,63 @@
 <html lang="es" data-theme="morfosis">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='8' fill='%23111214'/%3E%3C/svg%3E'>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cliente — Catálogo</title>
+    <title>Cliente – Catálogo</title>
     <link rel="stylesheet" href="assets/css/styles.css" />
   </head>
   <body>
-    <main class="container page-gap">
-      <h1>Catálogo público</h1>
-      <p>Placeholder para listado de drops y checkout (Segmento 6.2).</p>
-      <div class="grid grid--cards">
-        <article class="card">
-          <div class="card__media"></div>
-          <div class="card__body">
-            <h3>Prenda placeholder</h3>
-            <p>Descripción breve del producto.</p>
-            <button class="btn btn--secondary" disabled>Agregar</button>
+    <!-- Header/navbar injected by app.js -->
+
+    <main class="container page-gap" id="catalog-root">
+      <header class="catalog-header">
+        <div>
+          <h1>Catálogo</h1>
+          <p class="catalog-hint">Grupo actual: <span id="grupo-badge" class="badge"></span> · Cambiar grupo en el toggle arriba</p>
+        </div>
+      </header>
+
+      <section class="catalog">
+        <aside class="catalog__drops" id="drops-list" aria-label="Drops publicados">
+          <div class="panel">
+            <div class="panel__header">Drops publicados</div>
+            <div class="panel__body" id="drops-container">
+              <div class="empty">Cargando drops…</div>
+            </div>
           </div>
-        </article>
-      </div>
+        </aside>
+
+        <section class="catalog__grid" aria-live="polite">
+          <div class="section__header">
+            <h2 id="prendas-title">Prendas</h2>
+          </div>
+          <div class="grid grid--cards" id="prendas-grid">
+            <!-- Cards renderizadas por cliente.js -->
+          </div>
+        </section>
+
+        <aside class="catalog__cart" id="cart-panel" aria-label="Carrito">
+          <div class="panel">
+            <div class="panel__header">Tu carrito</div>
+            <div class="panel__body" id="cart-items">
+              <div class="empty">Aún no has añadido prendas.</div>
+            </div>
+            <div class="panel__footer">
+              <div class="cart-total"><span>Total</span><strong id="cart-total">Q0.00</strong></div>
+              <button id="btn-checkout" class="btn btn--primary" disabled>Continuar a Checkout</button>
+            </div>
+          </div>
+        </aside>
+      </section>
     </main>
+
+    <!-- Footer injected by app.js -->
 
     <script src="assets/js/theme.js"></script>
     <script src="assets/js/api.js"></script>
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/ui.js"></script>
     <script src="assets/js/app.js"></script>
+    <script src="assets/js/cliente.js"></script>
   </body>
   </html>
-
