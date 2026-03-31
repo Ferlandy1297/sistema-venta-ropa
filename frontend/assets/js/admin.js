@@ -1,7 +1,10 @@
 ;(function(){
   const state = {
     token: null,
+    // Conciliacion date (kept for totals)
     fecha: fmtDate(new Date()),
+    // Pedidos-specific date filter (explicit only)
+    fechaPedidos: '',
     filtros: {
       grupoCodigo: '',
       tipoEntrega: '',
@@ -76,17 +79,21 @@
     state.loading = true
     renderLoading()
     try {
-      const params = new URLSearchParams()
-      if(state.fecha) params.append('fecha', state.fecha)
-      Object.entries(state.filtros).forEach(([k,v]) => { if(v) params.append(k, v) })
+      // Build pedidos params without forcing fecha unless explicitly set for pedidos
+      const paramsPedidos = new URLSearchParams()
+      Object.entries(state.filtros).forEach(([k,v]) => { if(v) paramsPedidos.append(k, v) })
+      if(state.fechaPedidos) paramsPedidos.append('fecha', state.fechaPedidos)
+
+      const pedidosUrl = `/api/admin/pedidos?${paramsPedidos.toString()}`
       const [pedidos, conc] = await Promise.all([
-        fetchAuth(`/api/admin/pedidos?${params.toString()}`),
+        fetchAuth(pedidosUrl),
         fetchAuth(`/api/admin/conciliacion?fecha=${encodeURIComponent(state.fecha)}`),
       ])
       state.pedidos = Array.isArray(pedidos) ? pedidos : []
       state.conciliacion = conc || null
     } catch (err){
       const msg = err && err.message ? err.message : 'Error cargando datos'
+      try { console.warn('[admin] loadData error', err) } catch (e){}
       window.UI.toast(msg, 'error')
       state.pedidos = []
       state.conciliacion = null
@@ -101,6 +108,9 @@
     const root = qs('#admin-root')
     const fechaEl = qs('input[name="fecha"]', root)
     state.fecha = (fechaEl && fechaEl.value) || state.fecha
+    // pedidos-specific date filter (optional)
+    const fechaPedidosEl = qs('input[name="fechaPedidos"]', root)
+    state.fechaPedidos = (fechaPedidosEl && fechaPedidosEl.value) ? fechaPedidosEl.value : ''
     ;['grupoCodigo','tipoEntrega','estadoPedido','estadoPago'].forEach(k => {
       const sel = qs(`select[name="${k}"]`, root)
       state.filtros[k] = sel ? (sel.value || '') : ''
@@ -285,7 +295,7 @@
         </div>
         <div class="panel">
           <div class="panel__body">
-            <div class="grid" style="grid-template-columns: repeat(4, minmax(160px,1fr));">
+            <div class="grid" style="grid-template-columns: repeat(5, minmax(160px,1fr));">
               <label>Grupo
                 <select name="grupoCodigo">
                   <option value="">Todos</option>
@@ -312,6 +322,9 @@
                   ${['PENDIENTE','PAGADO','CONTRAENTREGA','PARCIAL'].map(s => `<option value="${s}">${labelOf('estadoPago', s)}</option>`).join('')}
                 </select>
               </label>
+              <label>Fecha (pedidos)
+                <input type="date" name="fechaPedidos" value="${escapeHtml(state.fechaPedidos||'')}" />
+              </label>
             </div>
           </div>
           <div class="panel__footer" style="display:flex; justify-content:flex-end;">
@@ -324,6 +337,7 @@
             ${renderPedidosTableUI(state.pedidos)}
           </div>
         </div>
+
       </section>
     `
 
@@ -335,6 +349,7 @@
     setSel('estadoPedido', state.filtros.estadoPedido)
     setSel('estadoPago', state.filtros.estadoPago)
     const fechaEl = qs('input[name="fecha"]', r); if(fechaEl) fechaEl.value = state.fecha
+    const fechaPedidosEl = qs('input[name="fechaPedidos"]', r); if(fechaPedidosEl) fechaPedidosEl.value = state.fechaPedidos || ''
     qs('#btn-aplicar', r).addEventListener('click', onFilterChange)
     if(!state.loading){
       // ensure current data is rendered
@@ -401,7 +416,7 @@
             <div>
               <div style="display:flex; gap:6px; align-items:center; justify-content:flex-start; flex-wrap:wrap;">
                 <button class="btn btn--ghost" data-act="estado" data-id="${p.pedidoId}">Estado</button>
-                ${isDelivery ? `<button class=\"btn btn--ghost\" data-act=\"repartidor\" data-id=\"${p.pedidoId}\">Asignar</button>` : ''}
+                ${isDelivery ? `<button class="btn btn--ghost" data-act="repartidor" data-id="${p.pedidoId}">Asignar</button>` : ''}
               </div>
             </div>
           </div>
@@ -427,6 +442,8 @@
       })
     }
   }
+
+  
 
   // Boot
   function init(){ render() }
