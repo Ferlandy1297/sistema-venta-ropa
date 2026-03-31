@@ -374,6 +374,16 @@
     return `${entregadas}/${p.bolsasTotal||0}`
   }
 
+  function isPedidoCompletado(p){
+    if(String(p.estadoPedido) === 'ENTREGADO') return true
+    const bolsas = state.bolsasByPedido[p.id]
+    if(Array.isArray(bolsas)){
+      const entregadas = bolsas.filter(b => !!b.entregada).length
+      return (p.bolsasTotal||0) > 0 && entregadas === (p.bolsasTotal||0)
+    }
+    return false
+  }
+
   function renderPedidosTableUI(pedidos){
     if(!pedidos || !pedidos.length){ return '<div class="empty">Sin pedidos para recoger.</div>' }
     const gridCols = '120px 1.3fr 130px 120px 160px 120px 150px 200px 200px'
@@ -427,7 +437,10 @@
           act.className = 'scl-act'
           act.style.gridColumn = '1 / -1'
           act.style.paddingTop = '8px'
-          act.innerHTML = `<button class="btn btn--primary" data-act="bolsas" data-id="${pedido.id}">Entrega / Bolsas</button>`
+          const completed = isPedidoCompletado(pedido)
+          const label = completed ? 'Ver bolsas' : 'Entrega / Bolsas'
+          const klass = completed ? 'btn btn--ghost' : 'btn btn--primary'
+          act.innerHTML = `<button class="${klass}" data-act="bolsas" data-id="${pedido.id}">${label}</button>`
           row.after(act)
         }
       })
@@ -502,4 +515,3 @@
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init)
   else init()
 })()
-
