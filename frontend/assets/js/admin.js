@@ -83,13 +83,17 @@
       const paramsPedidos = new URLSearchParams()
       Object.entries(state.filtros).forEach(([k,v]) => { if(v) paramsPedidos.append(k, v) })
       if(state.fechaPedidos) paramsPedidos.append('fecha', state.fechaPedidos)
-
       const pedidosUrl = `/api/admin/pedidos?${paramsPedidos.toString()}`
+      const conciliacionUrl = `/api/admin/conciliacion?fecha=${encodeURIComponent(state.fecha)}`
+
+      try { console.debug('[admin] loadData params', { fecha: state.fecha, fechaPedidos: state.fechaPedidos, pedidosUrl: `${window.API.baseUrl}${pedidosUrl}`, conciliacionUrl: `${window.API.baseUrl}${conciliacionUrl}` }) } catch(e){}
+
       const [pedidos, conc] = await Promise.all([
         fetchAuth(pedidosUrl),
-        fetchAuth(`/api/admin/conciliacion?fecha=${encodeURIComponent(state.fecha)}`),
+        fetchAuth(conciliacionUrl),
       ])
       state.pedidos = Array.isArray(pedidos) ? pedidos : []
+      try { console.debug('[admin] pedidos count', state.pedidos.length) } catch(e){}
       state.conciliacion = conc || null
     } catch (err){
       const msg = err && err.message ? err.message : 'Error cargando datos'
@@ -115,6 +119,7 @@
       const sel = qs(`select[name="${k}"]`, root)
       state.filtros[k] = sel ? (sel.value || '') : ''
     })
+    try { console.debug('[admin] onFilterChange', { fecha: state.fecha, fechaPedidos: state.fechaPedidos, filtros: { ...state.filtros } }) } catch(e){}
     loadData()
   }
 
@@ -278,7 +283,7 @@
         <div class="section__header">
           <h2>Dashboard de Operacion</h2>
           <div class="form__row" style="min-width:220px;">
-            <label>Fecha
+            <label>Fecha de conciliación
               <input type="date" name="fecha" value="${escapeHtml(state.fecha)}" />
             </label>
           </div>
@@ -322,8 +327,9 @@
                   ${['PENDIENTE','PAGADO','CONTRAENTREGA','PARCIAL'].map(s => `<option value="${s}">${labelOf('estadoPago', s)}</option>`).join('')}
                 </select>
               </label>
-              <label>Fecha (pedidos)
+              <label>Fecha de pedido (opcional)
                 <input type="date" name="fechaPedidos" value="${escapeHtml(state.fechaPedidos||'')}" />
+                <div class="catalog-hint">Déjalo vacío para ver pedidos de todas las fechas</div>
               </label>
             </div>
           </div>
